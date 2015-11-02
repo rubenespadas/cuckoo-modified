@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block content %}
 <style>
 .btn-file {
@@ -35,29 +36,29 @@ $(document)
 
 $(document).ready( function() {
     $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
-        
+
         var input = $(this).parents('.input-group').find(':text'),
             log = numFiles > 1 ? numFiles + ' files selected' : label;
-        
+
         if( input.length ) {
             input.val(log);
         } else {
             if( log ) alert(log);
         }
-        
+
     });
-});     
+});
 </script>
 <div class="row">
     <div class="col-md-6 col-md-offset-3 center">
-        <p style="margin-bottom: 10px;"><img src="{{ STATIC_URL }}graphic/cuckoo.png" /></p>
+        <p style="margin-bottom: 10px;"><img src="{% static 'graphic/cuckoo.png' %}" /></p>
 
         <div class="row-fluid">
             <div class="span8">
                 <h3>Statistics</h3>
                 {% for he, desc, im in stat_items %}
                     <h2>{{he}}</h2>
-                    <img src="{{ STATIC_URL }}{{im}}"/>
+                    <img src="{% static im %}"/>
                     {{desc}}
                 {% endfor %}
             </div>

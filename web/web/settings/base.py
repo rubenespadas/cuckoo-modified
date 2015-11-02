@@ -3,10 +3,12 @@
 # See the file 'docs/LICENSE' for copying permission.
 
 import sys
-import os
+from unipath import Path
 
 # Cuckoo path.
-CUCKOO_PATH = os.path.join(os.getcwd(), "..")
+BASE_DIR = Path(__file__).ancestor(3)
+SETTINGS_DIR = Path(__file__).ancestor(1)
+CUCKOO_PATH = Path(__file__).ancestor(4)
 sys.path.append(CUCKOO_PATH)
 
 from lib.cuckoo.common.config import Config
@@ -49,13 +51,16 @@ OPT_ZER0M0N = False
 # To disable comment support, change the below to False
 COMMENTS = True
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+DEBUG = False
 
 # Database settings. We don't need it.
 DATABASES = {}
 
 SITE_ID = 1
+
+LANGUAGE_CODE = "en-us"
+
+MAX_UPLOAD_SIZE = 26214400
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -75,13 +80,11 @@ TIME_ZONE = None
 try:
     from secret_key import *
 except ImportError:
-    SETTINGS_DIR=os.path.abspath(os.path.dirname(__file__))
-    # Using the same generation schema of Django startproject.
     from django.utils.crypto import get_random_string
     key = get_random_string(50, "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)")
 
     # Write secret_key.py
-    with open(os.path.join(SETTINGS_DIR, "secret_key.py"), "w") as key_file:
+    with open(SETTINGS_DIR.child("secret_key.py"), "w") as key_file:
         key_file.write("SECRET_KEY = \"{0}\"".format(key))
 
     # Reload key.
@@ -106,10 +109,11 @@ STATIC_ROOT = ''
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
-# Additional locations of static files
-STATICFILES_DIRS = (
-    os.path.join(os.getcwd(), 'static'),
-)
+STATICFILES_DIRS = [
+    BASE_DIR.child('static'),
+]
+
+STATIC_ROOT = BASE_DIR.child('collected_statics')
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -117,13 +121,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-)
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -142,9 +139,24 @@ ROOT_URLCONF = 'web.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'web.wsgi.application'
 
-TEMPLATE_DIRS = (
-    "templates",
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            BASE_DIR.child('templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
 
 RATELIMIT_VIEW = 'api.views.limit_exceeded'
 
@@ -199,12 +211,3 @@ LOGGING = {
         },
     }
 }
-
-# Hack to import local settings.
-try:
-    LOCAL_SETTINGS
-except NameError:
-    try:
-        from local_settings import *
-    except ImportError:
-        pass

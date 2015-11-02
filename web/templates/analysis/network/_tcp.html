@@ -1,4 +1,5 @@
-<script src="{{ STATIC_URL }}js/hexdump.js"></script>
+{% load staticfiles %}
+<script src="{% static 'js/hexdump.js' %}"></script>
 <section id="tcp" class="tcpudp">
     <h4>TCP</h4>
     {% if analysis.network.tcp %}
@@ -33,7 +34,7 @@ $(function () {
         var $section = $(this).closest("section");
 
         $section.find("table tr.connrow").removeClass("row-active");
-        $(this).addClass("row-active"); 
+        $(this).addClass("row-active");
 
         var choice = $(this).closest('tr').attr('data');
 
@@ -49,7 +50,7 @@ $(function () {
                     var tuple = p.src + ":" + p.sport + " &rarr; " + p.dst + ":" + p.dport;
 
                     if (first == undefined) first = tuple;
-                    if (first != tuple) { 
+                    if (first != tuple) {
                         tcpclass = "tcp-in";
                         icon = "<i class=\"glyphicon glyphicon-chevron-down\" title=\"Inbound\"></i>";
                     } else {

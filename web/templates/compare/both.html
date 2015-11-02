@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block content %}
-<p style="margin-bottom: 10px;"><img src="{{ STATIC_URL }}graphic/cuckoo.png" /></p>
+<p style="margin-bottom: 10px;"><img src="{% static 'graphic/cuckoo.png' %}" /></p>
 
 <script type='text/javascript'>
 $(function () {
@@ -25,7 +26,7 @@ $(function () {
                 <span class="badge registry" style="color:black;">registry</span>
                 <span class="badge filesystem" style="color:black;">filesystem</span>
                 <span class="badge system" style="color:black;">system</span>
-                <span class="badge network" style="color:black;">network</span>                
+                <span class="badge network" style="color:black;">network</span>
                 <span class="badge process" style="color:black;">process</span>
                 <span class="badge services" style="color:black;">services</span>
                 <span class="badge synchronization" style="color:black;">synchronization</span>
